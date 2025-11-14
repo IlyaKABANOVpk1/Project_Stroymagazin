@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project_Stroymagazin", "Project_Stroymagazin.csproj", "{48F92B96-E79B-4D7E-89D0-FEDB318578FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48F92B96-E79B-4D7E-89D0-FEDB318578FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48F92B96-E79B-4D7E-89D0-FEDB318578FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48F92B96-E79B-4D7E-89D0-FEDB318578FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48F92B96-E79B-4D7E-89D0-FEDB318578FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC5CEF9F-6853-4E80-9B36-15F6C2C30414}
+	EndGlobalSection
+EndGlobal
