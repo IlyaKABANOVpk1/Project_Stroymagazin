@@ -1,12 +1,123 @@
-﻿<Window x:Class="Project_Stroymagazin.MainWindow"
+﻿  <Window x:Class="Project_Stroymagazin.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Project_Stroymagazin"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Строймагазин — Панель управления"
+        Height="768" Width="1280"
+        WindowState="Maximized"
+        FontFamily="Segoe UI"
+        Background="#F5F7FA">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" MinWidth="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
+    
+        <Border Grid.Column="0" Background="#1A3E6F" BorderThickness="0,0,1,0" BorderBrush="#E0E0E0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+            
+                <StackPanel Grid.Row="0" Margin="20,25,20,20" Orientation="Horizontal">
+                    <TextBlock Text="Store" FontSize="28" FontWeight="Bold" Foreground="White" VerticalAlignment="Center"/>
+                    <TextBlock Text="Строймагазин" FontSize="20" FontWeight="SemiBold" Foreground="White" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                </StackPanel>
+
+           
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding MenuItems}"
+                         SelectedItem="{Binding SelectedMenuItem}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         Margin="0,0,0,20"
+                         SelectionMode="Single">
+
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Padding" Value="20,14"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Bd"
+                                                Background="{TemplateBinding Background}"
+                                                Padding="{TemplateBinding Padding}"
+                                                Margin="8,2"
+                                                CornerRadius="4">
+                                            <ContentPresenter />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#33FFFFFF"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                            </Trigger>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="#22FFFFFF"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Icon}" FontSize="20" Margin="0,0,12,0"/>
+                                <TextBlock Text="{Binding Title}" FontSize="16" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+       
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+           
+            <Border Grid.Row="0" Background="White" BorderBrush="#E0E0E0" BorderThickness="0,0,0,1">
+                <DockPanel Margin="20,0">
+                    
+                    <TextBlock Text="{Binding CurrentPageTitle}"
+                               FontSize="20"
+                               FontWeight="Medium"
+                               Foreground="#1A3E6F"
+                               VerticalAlignment="Center"
+                               Margin="0,0,20,0"/>
+
+                    
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center">
+                        <TextBlock Text="{Binding CurrentUser.FullName}"
+                                   FontSize="16"
+                                   Foreground="#1A3E6F"
+                                   Margin="0,0,20,0"/>
+                        <Button Content="Выход"
+                                Command="{Binding LogoutCommand}"
+                                Background="#FFD32F2F"
+                                Foreground="White"
+                                Padding="16,8"
+                                FontWeight="Medium"/>
+                    </StackPanel>
+                </DockPanel>
+            </Border>
+
+          
+            <ContentControl Grid.Row="1"
+                            Content="{Binding CurrentPage}"
+                            Margin="25"/>
+        </Grid>
     </Grid>
 </Window>
+    
