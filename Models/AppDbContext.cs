@@ -13,6 +13,10 @@ namespace Project_Stroymagazin.Models
     {
         private readonly IConfiguration _configuration;
 
+        public AppDbContext()
+        {
+        }
+
         public AppDbContext(IConfiguration configuration)
         {
             _configuration = configuration;
