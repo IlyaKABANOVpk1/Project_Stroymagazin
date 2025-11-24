@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using Project_Stroymagazin.Models.Entities;
+using Project_Stroymagazin.Models.Entities.ENUMS;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -8,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Project_Stroymagazin.Pages;
 
 namespace Project_Stroymagazin
 {
@@ -16,9 +19,121 @@ namespace Project_Stroymagazin
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private readonly User _currentUser;
+
+        public MainWindow(User user)
         {
             InitializeComponent();
+            _currentUser = user;
+
+           
+            UserFullNameText.Text = _currentUser.FullName;
+
+          
+            UserRoleText.Text = _currentUser.Role.ToString();
+
+            GenerateMenu();
+        }
+
+        private void GenerateMenu()
+        {
+            MenuPanel.Children.Clear();
+
+         
+            CreateMenuButton("Главная", "Home", () =>
+            {
+                PageTitleText.Text = "Общая статистика";
+                // MainFrame.Navigate(new DashboardPage()); 
+            });
+
+         
+            if (_currentUser.Role == RoleType.Administrator)
+            {
+                CreateSectionHeader("Администрирование");
+                CreateMenuButton("Сотрудники", "AccountMultiple", () =>
+                {
+                    PageTitleText.Text = "Управление персоналом";
+                    MainFrame.Navigate(new UsersPage());
+                });
+                CreateMenuButton("Склады", "Warehouse", () =>
+                {
+                    PageTitleText.Text = "Управление складами";
+                    // MainFrame.Navigate(new WarehousesPage());
+                });
+            }
+
+           
+            if (_currentUser.Role == RoleType.WarehouseManager || _currentUser.Role == RoleType.Administrator)
+            {
+                CreateSectionHeader("Склад");
+                CreateMenuButton("Остатки товара", "Box", () =>
+                {
+                    PageTitleText.Text = "Текущие остатки";
+                    MainFrame.Navigate(new StockPage());
+                });
+                CreateMenuButton("История операций", "History", () => { PageTitleText.Text = "Движение товаров"; });
+            }
+
+           
+            if (_currentUser.Role == RoleType.PurchaseManager || _currentUser.Role == RoleType.Administrator)
+            {
+                CreateSectionHeader("Закупки");
+                CreateMenuButton("Заказы поставщикам", "Truck", () => { PageTitleText.Text = "Заказы"; });
+                CreateMenuButton("Поставщики", "Domain", () => { PageTitleText.Text = "База поставщиков"; });
+            }
+
+           
+            if (_currentUser.Role == RoleType.Cashier || _currentUser.Role == RoleType.Administrator)
+            {
+                CreateSectionHeader("Торговый зал");
+                CreateMenuButton("Продажа", "Cart", () => { PageTitleText.Text = "Оформление продажи"; });
+            }
+        }
+
+       
+        private void CreateMenuButton(string text, string iconName, Action onClick)
+        {
+            Button btn = new Button
+            {
+                Content = text,
+                Height = 45,
+                Margin = new Thickness(0, 2, 0, 2),
+                Background = Brushes.Transparent,
+                Foreground = new SolidColorBrush(Color.FromRgb(220, 220, 250)),
+                BorderThickness = new Thickness(0),
+                HorizontalContentAlignment = HorizontalAlignment.Left,
+                Padding = new Thickness(20, 0, 0, 0),
+                FontSize = 14,
+                Cursor = System.Windows.Input.Cursors.Hand
+            };
+
+            btn.Click += (s, e) => onClick();
+
+            
+            btn.MouseEnter += (s, e) => btn.Background = new SolidColorBrush(Color.FromRgb(57, 73, 171));
+            btn.MouseLeave += (s, e) => btn.Background = Brushes.Transparent;
+
+            MenuPanel.Children.Add(btn);
+        }
+
+        private void CreateSectionHeader(string title)
+        {
+            TextBlock tb = new TextBlock
+            {
+                Text = title.ToUpper(),
+                Foreground = new SolidColorBrush(Color.FromRgb(159, 168, 218)),
+                FontSize = 11,
+                FontWeight = FontWeights.Bold,
+                Margin = new Thickness(15, 15, 0, 5)
+            };
+            MenuPanel.Children.Add(tb);
+        }
+
+        private void Logout_Click(object sender, RoutedEventArgs e)
+        {
+            LoginWindow login = new LoginWindow();
+            login.Show();
+            this.Close();
         }
     }
 }

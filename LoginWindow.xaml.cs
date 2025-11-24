@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Project_Stroymagazin.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,41 @@ namespace Project_Stroymagazin
         public LoginWindow()
         {
             InitializeComponent();
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            string username = LoginBox.Text;
+            string password = PassBox.Password; 
+
+            using (var db = new AppDbContext())
+            {
+              
+                var user = db.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
+
+                if (user != null)
+                {
+                    if (!user.IsActive)
+                    {
+                        ErrorText.Text = "Доступ запрещен. Пользователь заблокирован.";
+                        return;
+                    }
+
+                    // Передаем пользователя в главное окно
+                    MainWindow main = new MainWindow(user);
+                    main.Show();
+                    this.Close();
+                }
+                else
+                {
+                    ErrorText.Text = "Неверное имя пользователя или пароль.";
+                }
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

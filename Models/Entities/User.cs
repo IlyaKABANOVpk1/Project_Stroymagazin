@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Project_Stroymagazin.Models.Entities.ENUMS;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,18 +11,15 @@ namespace Project_Stroymagazin.Models.Entities
     public class User
     {
         public int Id { get; set; }
+        [Required]
         public string Username { get; set; } = null!;
+        [Required]
         public string PasswordHash { get; set; } = null!;
-        public string? Salt { get; set; }
-        public string? Email { get; set; }
-        public string FirstName { get; set; } = null!;
-        public string LastName { get; set; } = null!;
+        public string FullName { get; set; } = null!;
+        public RoleType Role { get; set; } 
         public bool IsActive { get; set; } = true;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? LastLoginAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
 
-        public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
-        public string FullName => $"{FirstName} {LastName}";
+        // Навигация
+        public ICollection<PurchaseOrder> Orders { get; set; } = new List<PurchaseOrder>();
     }
 }

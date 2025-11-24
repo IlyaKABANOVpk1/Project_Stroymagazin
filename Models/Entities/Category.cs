@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Project_Stroymagazin.Models.Entities
 {
-    public class OrderStatus
+    public class Category
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
-        public string? Description { get; set; }
-        public ICollection<PurchaseOrder> PurchaseOrders { get; set; } = new List<PurchaseOrder>();
+        public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }
