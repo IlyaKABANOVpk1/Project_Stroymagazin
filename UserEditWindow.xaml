@@ -1,0 +1,59 @@
+﻿<Window x:Class="Project_Stroymagazin.UserEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Сотрудник" Height="450" Width="400"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#F5F5F5">
+
+    <Border Margin="20" Background="White" CornerRadius="5" Padding="20">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.1"/>
+        </Border.Effect>
+
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="ДАННЫЕ СОТРУДНИКА" FontWeight="Bold" Foreground="#1A237E" 
+                       HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+            <TextBlock Text="ФИО:" Foreground="#666" Margin="0,5,0,2"/>
+            <TextBox x:Name="FullNameBox" Padding="5" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Логин:" Foreground="#666" Margin="0,5,0,2"/>
+            <TextBox x:Name="UsernameBox" Padding="5" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Пароль:" Foreground="#666" Margin="0,5,0,2"/>
+            <TextBox x:Name="PasswordBox" Padding="5" Margin="0,0,0,10"/>
+
+            <TextBlock Text="Должность:" Foreground="#666" Margin="0,5,0,2"/>
+            <ComboBox x:Name="RoleCombo" Padding="5" Margin="0,0,0,10"/>
+
+            <CheckBox x:Name="IsActiveCheck" Content="Активный пользователь" 
+                      IsChecked="True" Margin="0,10,0,20"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="Сохранить" Click="Save_Click"
+                        Background="#2E7D32" Foreground="White" Padding="10" BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+
+                <Button Grid.Column="2" Content="Отмена" Click="Cancel_Click"
+                        Background="#E0E0E0" Foreground="#333" Padding="10" BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>

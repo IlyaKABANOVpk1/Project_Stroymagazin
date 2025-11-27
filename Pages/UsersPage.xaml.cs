@@ -43,15 +43,15 @@ namespace Project_Stroymagazin.Pages
 
         private void AddUser_Click(object sender, RoutedEventArgs e)
         {
-            
-            // new UserEditWindow().ShowDialog();
-            // LoadData();
+
+            new UserEditWindow().ShowDialog();
+            LoadData();
             MessageBox.Show("Функционал добавления будет реализован в следующем шаге (UserEditWindow)", "В разработке");
         }
 
         private void DeleteUser_Click(object sender, RoutedEventArgs e)
         {
-            // Получаем ID из свойства Tag кнопки
+       
             if (sender is Button btn && btn.Tag is int userId)
             {
                 if (MessageBox.Show("Вы уверены, что хотите удалить этого пользователя?", "Подтверждение",
