@@ -1,4 +1,4 @@
-﻿<Page x:Class="Project_Stroymagazin.Views.Pages.WarehousesPage"
+﻿<Page x:Class="Project_Stroymagazin.Pages.WarehousesPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       Title="Склады" Background="White" FontFamily="Segoe UI">

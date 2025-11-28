@@ -33,6 +33,9 @@ namespace Project_Stroymagazin
             UserRoleText.Text = _currentUser.Role.ToString();
 
             GenerateMenu();
+
+            MainFrame.Navigate(new Pages.DashboardPage());
+            PageTitleText.Text = "Общая статистика";
         }
 
         private void GenerateMenu()
@@ -43,7 +46,7 @@ namespace Project_Stroymagazin
             CreateMenuButton("Главная", "Home", () =>
             {
                 PageTitleText.Text = "Общая статистика";
-                // MainFrame.Navigate(new DashboardPage()); 
+                MainFrame.Navigate(new DashboardPage()); 
             });
 
          
@@ -58,7 +61,7 @@ namespace Project_Stroymagazin
                 CreateMenuButton("Склады", "Warehouse", () =>
                 {
                     PageTitleText.Text = "Управление складами";
-                    // MainFrame.Navigate(new WarehousesPage());
+                    MainFrame.Navigate(new WarehousesPage());
                 });
             }
 
@@ -74,15 +77,26 @@ namespace Project_Stroymagazin
                 CreateMenuButton("История операций", "History", () => { PageTitleText.Text = "Движение товаров"; });
             }
 
-           
+
             if (_currentUser.Role == RoleType.PurchaseManager || _currentUser.Role == RoleType.Administrator)
             {
                 CreateSectionHeader("Закупки");
-                CreateMenuButton("Заказы поставщикам", "Truck", () => { PageTitleText.Text = "Заказы"; });
-                CreateMenuButton("Поставщики", "Domain", () => { PageTitleText.Text = "База поставщиков"; });
+
+                CreateMenuButton("Заказы поставщикам", "Truck", () =>
+                {
+                    PageTitleText.Text = "Заказы";
+                  
+                });
+
+                CreateMenuButton("Поставщики", "Domain", () =>
+                {
+                    PageTitleText.Text = "База поставщиков";
+                 
+                    MainFrame.Navigate(new Pages.SuppliersPage());
+                });
             }
 
-           
+
             if (_currentUser.Role == RoleType.Cashier || _currentUser.Role == RoleType.Administrator)
             {
                 CreateSectionHeader("Торговый зал");

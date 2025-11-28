@@ -1,0 +1,57 @@
+﻿<Page x:Class="Project_Stroymagazin.Pages.DashboardPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Главная" Background="White" FontFamily="Segoe UI">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Обзор системы" FontSize="24" Foreground="#333" Margin="0,0,0,20"/>
+
+        <UniformGrid Grid.Row="1" Columns="2" Rows="2" VerticalAlignment="Top">
+
+            <Border Background="#2196F3" CornerRadius="8" Margin="0,0,10,10" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="2"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="📦 Всего позиций" Foreground="White" FontSize="16" Opacity="0.8"/>
+                    <TextBlock x:Name="TotalProductsText" Text="0" Foreground="White" FontSize="36" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#4CAF50" CornerRadius="8" Margin="10,0,0,10" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="2"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="🏭 Склады" Foreground="White" FontSize="16" Opacity="0.8"/>
+                    <TextBlock x:Name="TotalWarehousesText" Text="0" Foreground="White" FontSize="36" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#FF9800" CornerRadius="8" Margin="0,10,10,0" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="2"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="👥 Сотрудники" Foreground="White" FontSize="16" Opacity="0.8"/>
+                    <TextBlock x:Name="TotalUsersText" Text="0" Foreground="White" FontSize="36" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#607D8B" CornerRadius="8" Margin="10,10,0,0" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.2" ShadowDepth="2"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="💰 Оценочная стоимость склада" Foreground="White" FontSize="16" Opacity="0.8"/>
+                    <TextBlock x:Name="StockValueText" Text="0 ₽" Foreground="White" FontSize="36" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+        </UniformGrid>
+    </Grid>
+</Page>
