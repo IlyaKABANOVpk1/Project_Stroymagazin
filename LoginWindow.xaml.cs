@@ -57,10 +57,10 @@ namespace Project_Stroymagazin
                             return;
                         }
 
-                        // Вход успешен:
+                       
                         LoggedInUser = user;
 
-                        // Передаем пользователя в главное окно
+                       
                         MainWindow main = new MainWindow(user);
                         main.Show();
 
@@ -68,13 +68,13 @@ namespace Project_Stroymagazin
                     }
                     else
                     {
-                        // Пароль неверен
+                     
                         ErrorText.Text = "Неверное имя пользователя или пароль.";
                     }
                 }
                 else
                 {
-                    // Пользователь не найден
+                    
                     ErrorText.Text = "Неверное имя пользователя или пароль.";
                 }
             }

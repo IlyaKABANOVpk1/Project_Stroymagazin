@@ -24,14 +24,14 @@ namespace Project_Stroymagazin
     /// </summary>
     public partial class UserEditWindow : Window
     {
-        private User _user; // Если null - создание, иначе редактирование
+        private User _user; 
 
         public UserEditWindow(User user = null)
         {
             InitializeComponent();
             _user = user;
 
-            // Заполняем ComboBox значениями из Enum
+          
             RoleCombo.ItemsSource = Enum.GetValues(typeof(RoleType));
             RoleCombo.SelectedIndex = 0;
 
@@ -39,12 +39,11 @@ namespace Project_Stroymagazin
 
             if (_user != null)
             {
-                // Режим редактирования: заполняем поля
                 FullNameBox.Text = _user.FullName;
                 UsernameBox.Text = _user.Username;
 
-                // УДАЛЕНО: PasswordBox.Text = _user.PasswordHash; 
-                PasswordBox.Password = ""; // Оставляем поле пустым
+              
+                PasswordBox.Password = ""; 
 
                 RoleCombo.SelectedItem = _user.Role;
                 IsActiveCheck.IsChecked = _user.IsActive;
@@ -53,7 +52,7 @@ namespace Project_Stroymagazin
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            // 1. Проверка обязательных полей
+        
             if (string.IsNullOrWhiteSpace(UsernameBox.Text) || string.IsNullOrWhiteSpace(FullNameBox.Text))
             {
                 MessageBox.Show("Заполните все обязательные поля!");
@@ -66,16 +65,14 @@ namespace Project_Stroymagazin
             {
                 if (_user == null)
                 {
-                    // --- РЕЖИМ СОЗДАНИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ ---
-
-                    // В режиме создания пароль обязателен
+                  
                     if (string.IsNullOrWhiteSpace(newPassword))
                     {
                         MessageBox.Show("Для нового пользователя пароль обязателен!");
                         return;
                     }
 
-                    // Проверка на уникальность Username (Опционально, но рекомендуется)
+                   
                     if (db.Users.Any(u => u.Username == UsernameBox.Text))
                     {
                         MessageBox.Show("Пользователь с таким именем уже существует!");
@@ -86,7 +83,7 @@ namespace Project_Stroymagazin
                     {
                         FullName = FullNameBox.Text,
                         Username = UsernameBox.Text,
-                        // !!! ХЕШИРОВАНИЕ !!!
+                     
                         PasswordHash = PasswordHasher.HashPassword(newPassword),
                         Role = (RoleType)RoleCombo.SelectedItem,
                         IsActive = IsActiveCheck.IsChecked ?? true
@@ -95,7 +92,7 @@ namespace Project_Stroymagazin
                 }
                 else
                 {
-                    // --- РЕЖИМ РЕДАКТИРОВАНИЯ ---
+               
                     var userToUpdate = db.Users.Find(_user.Id);
 
                     if (userToUpdate != null)
@@ -103,12 +100,11 @@ namespace Project_Stroymagazin
                         userToUpdate.FullName = FullNameBox.Text;
                         userToUpdate.Username = UsernameBox.Text;
 
-                        // !!! ХЕШИРОВАНИЕ (ТОЛЬКО ЕСЛИ ПАРОЛЬ БЫЛ ИЗМЕНЕН) !!!
                         if (!string.IsNullOrWhiteSpace(newPassword))
                         {
                             userToUpdate.PasswordHash = PasswordHasher.HashPassword(newPassword);
                         }
-                        // Если поле пароля пустое, старый хеш остается.
+                       
 
                         userToUpdate.Role = (RoleType)RoleCombo.SelectedItem;
                         userToUpdate.IsActive = IsActiveCheck.IsChecked ?? true;
@@ -118,7 +114,7 @@ namespace Project_Stroymagazin
                 db.SaveChanges();
             }
 
-            // Установка DialogResult = true, если окно открыто как Dialog
+   
             this.DialogResult = true;
             this.Close();
         }
