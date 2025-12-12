@@ -23,17 +23,26 @@ namespace Project_Stroymagazin.Models
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<InventoryTransaction> InventoryTransactions { get; set; }
 
+        public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
+        {
+        }
+
         public AppDbContext()
         {
-            
-            Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-           
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=StroyMagazinV2;Trusted_Connection=True;");
+            
+            if (!optionsBuilder.IsConfigured)
+            {
+               
+                optionsBuilder.UseSqlServer("Server=HULK;Database=ProjectStroymagazinDB;Trusted_Connection=True;TrustServerCertificate=True");
+            }
         }
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -64,6 +73,28 @@ namespace Project_Stroymagazin.Models
             modelBuilder.Entity<Warehouse>().HasData(
                 new Warehouse { Id = 1, Name = "Центральный склад", Address = "ул. Ленина 1" }
             );
+
+
+            modelBuilder.Entity<Product>()
+                .Property(p => p.Price)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.PurchasePrice)
+                .HasPrecision(18, 2);
+
+            
+            modelBuilder.Entity<InventoryTransaction>()
+                .Property(t => t.Quantity)
+                .HasPrecision(18, 4);
+
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.Quantity)
+                .HasPrecision(18, 4);
+
+            modelBuilder.Entity<Stock>()
+                .Property(s => s.Quantity)
+                .HasPrecision(18, 4);
         }
     }
 }

@@ -1,0 +1,54 @@
+﻿<Page x:Class="Project_Stroymagazin.Pages.ArrivalPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Приемка товара" Background="#F5F5F5" FontFamily="Segoe UI">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+            <StackPanel>
+                <TextBlock Text="Выбор заказа и склада" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,10"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Заказ на закупку:" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="OrderCombo" DisplayMemberPath="DisplayInfo" SelectedValuePath="Id" SelectionChanged="OrderCombo_SelectionChanged"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                        <TextBlock Text="Склад для приемки:" Margin="0,0,0,5"/>
+                        <ComboBox x:Name="WarehouseCombo" DisplayMemberPath="Name" SelectedValuePath="Id"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <DataGrid x:Name="ItemsGrid" Grid.Row="1" AutoGenerateColumns="False" 
+                  CanUserAddRows="False" IsReadOnly="True" HeadersVisibility="Column" 
+                  Margin="0,0,0,15" BorderBrush="#E0E0E0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Товар" Binding="{Binding Product.Name}" Width="*"/>
+                <DataGridTextColumn Header="Артикул" Binding="{Binding Product.SKU}" Width="150"/>
+                <DataGridTextColumn Header="Ожидаемое кол-во" Binding="{Binding Quantity}" Width="150"/>
+                <DataGridTextColumn Header="Цена закупки" Binding="{Binding PurchasePrice, StringFormat=C2}" Width="150"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Grid.Row="2" Content="Подтвердить приемку (Оформить приход)" Click="ConfirmArrival_Click"
+                Background="#4CAF50" Foreground="White" Padding="20,10" BorderThickness="0" HorizontalAlignment="Right">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="4"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+    </Grid>
+</Page>

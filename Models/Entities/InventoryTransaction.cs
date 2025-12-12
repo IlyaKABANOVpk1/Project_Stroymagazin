@@ -21,6 +21,8 @@ namespace Project_Stroymagazin.Models.Entities
 
         public decimal Quantity { get; set; } // + приход, - расход
         public int UserId { get; set; } // Кто провел операцию
+
+        public User User { get; set; } = null!;
     }
 }
 

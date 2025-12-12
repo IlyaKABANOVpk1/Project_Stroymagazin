@@ -42,69 +42,94 @@ namespace Project_Stroymagazin
         {
             MenuPanel.Children.Clear();
 
-         
+            
             CreateMenuButton("Главная", "Home", () =>
             {
                 PageTitleText.Text = "Общая статистика";
-                MainFrame.Navigate(new DashboardPage()); 
+                MainFrame.Navigate(new DashboardPage());
             });
 
-         
+      
             if (_currentUser.Role == RoleType.Administrator)
             {
                 CreateSectionHeader("Администрирование");
+
                 CreateMenuButton("Сотрудники", "AccountMultiple", () =>
                 {
                     PageTitleText.Text = "Управление персоналом";
                     MainFrame.Navigate(new UsersPage());
                 });
+
                 CreateMenuButton("Склады", "Warehouse", () =>
                 {
                     PageTitleText.Text = "Управление складами";
                     MainFrame.Navigate(new WarehousesPage());
                 });
+
+               
+                CreateMenuButton("Каталог товаров", "PackageVariantClosed", () =>
+                {
+                    PageTitleText.Text = "Управление каталогом";
+                    MainFrame.Navigate(new ProductsPage());
+                });
             }
 
            
-            if (_currentUser.Role == RoleType.WarehouseManager || _currentUser.Role == RoleType.Administrator)
-            {
-                CreateSectionHeader("Склад");
-                CreateMenuButton("Остатки товара", "Box", () =>
-                {
-                    PageTitleText.Text = "Текущие остатки";
-                    MainFrame.Navigate(new StockPage());
-                });
-                CreateMenuButton("История операций", "History", () => { PageTitleText.Text = "Движение товаров"; });
-            }
-
-
             if (_currentUser.Role == RoleType.PurchaseManager || _currentUser.Role == RoleType.Administrator)
             {
                 CreateSectionHeader("Закупки");
 
+             
                 CreateMenuButton("Заказы поставщикам", "Truck", () =>
                 {
                     PageTitleText.Text = "Заказы";
-                  
+                    MainFrame.Navigate(new OrdersPage());
                 });
 
                 CreateMenuButton("Поставщики", "Domain", () =>
                 {
                     PageTitleText.Text = "База поставщиков";
-                 
-                    MainFrame.Navigate(new Pages.SuppliersPage());
+                    MainFrame.Navigate(new SuppliersPage());
                 });
             }
 
-
-            if (_currentUser.Role == RoleType.Cashier || _currentUser.Role == RoleType.Administrator)
+            
+            if (_currentUser.Role == RoleType.WarehouseManager || _currentUser.Role == RoleType.Administrator)
             {
-                CreateSectionHeader("Торговый зал");
-                CreateMenuButton("Продажа", "Cart", () => { PageTitleText.Text = "Оформление продажи"; });
+                CreateSectionHeader("Склад и логистика");
+
+                CreateMenuButton("Остатки товара", "Box", () =>
+                {
+                    PageTitleText.Text = "Текущие остатки";
+                    MainFrame.Navigate(new StockPage());
+                });
+
+              
+                CreateMenuButton("Приемка товара", "Download", () =>
+                {
+                    PageTitleText.Text = "Оформление прихода";
+                    MainFrame.Navigate(new ArrivalPage());
+                });
+
+               
+                CreateMenuButton("Отгрузка/Списание", "Upload", () =>
+                {
+                    PageTitleText.Text = "Оформление расхода";
+                    MainFrame.Navigate(new ShipmentPage());
+                });
+
+               
+                CreateMenuButton("История операций", "History", () =>
+                {
+                    PageTitleText.Text = "Движение товаров";
+                    MainFrame.Navigate(new InventoryHistoryPage());
+                });
             }
+
+           
         }
 
-       
+
         private void CreateMenuButton(string text, string iconName, Action onClick)
         {
             Button btn = new Button

@@ -46,7 +46,7 @@ namespace Project_Stroymagazin.Pages
 
             new UserEditWindow().ShowDialog();
             LoadData();
-            MessageBox.Show("Функционал добавления будет реализован в следующем шаге (UserEditWindow)", "В разработке");
+           
         }
 
         private void DeleteUser_Click(object sender, RoutedEventArgs e)
@@ -63,7 +63,7 @@ namespace Project_Stroymagazin.Pages
                         if (user != null)
                         {
                             
-                            // db.Users.Remove(user); 
+                            db.Users.Remove(user); 
                             user.IsActive = false; 
                             db.SaveChanges();
                             LoadData();

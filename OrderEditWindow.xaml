@@ -1,0 +1,100 @@
+﻿<Window x:Class="Project_Stroymagazin.OrderEditWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Новый заказ поставщику" Height="600" Width="900"
+        WindowStartupLocation="CenterScreen" Background="#F5F5F5">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="White" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+            <StackPanel Orientation="Horizontal">
+                <StackPanel Margin="0,0,20,0">
+                    <TextBlock Text="Поставщик:" Foreground="#666" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="SupplierCombo" Width="250" DisplayMemberPath="Name" SelectedValuePath="Id"/>
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Менеджер:" Foreground="#666" Margin="0,0,0,5"/>
+                    <TextBlock x:Name="ManagerNameText" Text="..." FontWeight="Bold" FontSize="14"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="1" Background="#E3F2FD" CornerRadius="5" Padding="15" Margin="0,0,0,15">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                    <TextBlock Text="Товар:" Foreground="#1565C0" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="ProductCombo" DisplayMemberPath="Name" SelectedValuePath="Id"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                    <TextBlock Text="Количество:" Foreground="#1565C0" Margin="0,0,0,5"/>
+                    <TextBox x:Name="QuantityBox" Padding="5"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Margin="0,0,10,0">
+                    <TextBlock Text="Цена закупки:" Foreground="#1565C0" Margin="0,0,0,5"/>
+                    <TextBox x:Name="PriceBox" Padding="5"/>
+                </StackPanel>
+
+                <Button Grid.Column="3" Content="Добавить" Click="AddItem_Click" VerticalAlignment="Bottom"
+                        Background="#1565C0" Foreground="White" Padding="20,6" BorderThickness="0">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
+        </Border>
+
+        <DataGrid x:Name="ItemsGrid" Grid.Row="2" AutoGenerateColumns="False" 
+                  CanUserAddRows="False" IsReadOnly="True" Background="White"
+                  GridLinesVisibility="Horizontal" HeadersVisibility="Column"
+                  RowHeight="35" ColumnHeaderHeight="40" BorderBrush="#E0E0E0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Товар" Binding="{Binding Product.Name}" Width="*"/>
+                <DataGridTextColumn Header="Артикул" Binding="{Binding Product.SKU}" Width="150"/>
+                <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="100"/>
+                <DataGridTextColumn Header="Цена" Binding="{Binding PurchasePrice, StringFormat=C2}" Width="100"/>
+                <DataGridTemplateColumn Width="80">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="X" Click="RemoveItem_Click" Tag="{Binding .}"
+                                    Background="Transparent" Foreground="Red" BorderThickness="0" FontWeight="Bold" Cursor="Hand"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Grid Grid.Row="3" Margin="0,20,0,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBlock Text="Итого:" FontSize="16" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock x:Name="TotalAmountText" Text="0 ₽" FontSize="20" FontWeight="Bold" Margin="0,0,20,0"/>
+
+                <Button Content="Оформить заказ" Click="SaveOrder_Click"
+                        Background="#2E7D32" Foreground="White" Padding="20,10" FontSize="14" BorderThickness="0" Cursor="Hand">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="4"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
