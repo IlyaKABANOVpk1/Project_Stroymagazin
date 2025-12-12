@@ -1,6 +1,7 @@
 ﻿using Project_Stroymagazin.Models;
 using Project_Stroymagazin.Models.Entities;
 using Project_Stroymagazin.Models.Entities.ENUMS;
+using Project_Stroymagazin.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+
 
 namespace Project_Stroymagazin
 {
@@ -33,12 +35,17 @@ namespace Project_Stroymagazin
             RoleCombo.ItemsSource = Enum.GetValues(typeof(RoleType));
             RoleCombo.SelectedIndex = 0;
 
+            
+
             if (_user != null)
             {
                 // Режим редактирования: заполняем поля
                 FullNameBox.Text = _user.FullName;
                 UsernameBox.Text = _user.Username;
-                PasswordBox.Text = _user.PasswordHash;
+
+                // УДАЛЕНО: PasswordBox.Text = _user.PasswordHash; 
+                PasswordBox.Password = ""; // Оставляем поле пустым
+
                 RoleCombo.SelectedItem = _user.Role;
                 IsActiveCheck.IsChecked = _user.IsActive;
             }
@@ -46,22 +53,41 @@ namespace Project_Stroymagazin
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            // 1. Проверка обязательных полей
             if (string.IsNullOrWhiteSpace(UsernameBox.Text) || string.IsNullOrWhiteSpace(FullNameBox.Text))
             {
                 MessageBox.Show("Заполните все обязательные поля!");
                 return;
             }
 
+            string newPassword = PasswordBox.Password;
+
             using (var db = new AppDbContext())
             {
                 if (_user == null)
                 {
-                    // Создание нового
+                    // --- РЕЖИМ СОЗДАНИЯ НОВОГО ПОЛЬЗОВАТЕЛЯ ---
+
+                    // В режиме создания пароль обязателен
+                    if (string.IsNullOrWhiteSpace(newPassword))
+                    {
+                        MessageBox.Show("Для нового пользователя пароль обязателен!");
+                        return;
+                    }
+
+                    // Проверка на уникальность Username (Опционально, но рекомендуется)
+                    if (db.Users.Any(u => u.Username == UsernameBox.Text))
+                    {
+                        MessageBox.Show("Пользователь с таким именем уже существует!");
+                        return;
+                    }
+
                     var newUser = new User
                     {
                         FullName = FullNameBox.Text,
                         Username = UsernameBox.Text,
-                        PasswordHash = PasswordBox.Text, // В реальности хешируем
+                        // !!! ХЕШИРОВАНИЕ !!!
+                        PasswordHash = PasswordHasher.HashPassword(newPassword),
                         Role = (RoleType)RoleCombo.SelectedItem,
                         IsActive = IsActiveCheck.IsChecked ?? true
                     };
@@ -69,13 +95,21 @@ namespace Project_Stroymagazin
                 }
                 else
                 {
-                    // Обновление существующего (нужно приатачить к контексту)
+                    // --- РЕЖИМ РЕДАКТИРОВАНИЯ ---
                     var userToUpdate = db.Users.Find(_user.Id);
+
                     if (userToUpdate != null)
                     {
                         userToUpdate.FullName = FullNameBox.Text;
                         userToUpdate.Username = UsernameBox.Text;
-                        userToUpdate.PasswordHash = PasswordBox.Text;
+
+                        // !!! ХЕШИРОВАНИЕ (ТОЛЬКО ЕСЛИ ПАРОЛЬ БЫЛ ИЗМЕНЕН) !!!
+                        if (!string.IsNullOrWhiteSpace(newPassword))
+                        {
+                            userToUpdate.PasswordHash = PasswordHasher.HashPassword(newPassword);
+                        }
+                        // Если поле пароля пустое, старый хеш остается.
+
                         userToUpdate.Role = (RoleType)RoleCombo.SelectedItem;
                         userToUpdate.IsActive = IsActiveCheck.IsChecked ?? true;
                     }
@@ -84,6 +118,8 @@ namespace Project_Stroymagazin
                 db.SaveChanges();
             }
 
+            // Установка DialogResult = true, если окно открыто как Dialog
+            this.DialogResult = true;
             this.Close();
         }
 

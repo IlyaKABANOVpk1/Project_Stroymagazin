@@ -1,4 +1,6 @@
 ﻿using Project_Stroymagazin.Models;
+using Project_Stroymagazin.Models.Entities;
+using Project_Stroymagazin.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,8 @@ namespace Project_Stroymagazin
     /// </summary>
     public partial class LoginWindow : Window
     {
+        public User LoggedInUser { get; private set; }
+
         public LoginWindow()
         {
             InitializeComponent();
@@ -27,29 +31,50 @@ namespace Project_Stroymagazin
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string username = LoginBox.Text;
-            string password = PassBox.Password; 
+            string username = LoginBox.Text.Trim();
+            string password = PassBox.Password;
+
+            // 1. Проверка на пустые поля
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                ErrorText.Text = "Введите имя пользователя и пароль.";
+                return;
+            }
 
             using (var db = new AppDbContext())
             {
-              
-                var user = db.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
+                // Ищем пользователя только по имени, чтобы получить его хеш
+                var user = db.Users.FirstOrDefault(u => u.Username == username);
 
                 if (user != null)
                 {
-                    if (!user.IsActive)
+                    // 2. Использование PasswordHasher для сравнения введенного пароля с хешем
+                    if (PasswordHasher.VerifyPassword(password, user.PasswordHash))
                     {
-                        ErrorText.Text = "Доступ запрещен. Пользователь заблокирован.";
-                        return;
-                    }
+                        if (!user.IsActive)
+                        {
+                            ErrorText.Text = "Доступ запрещен. Пользователь заблокирован.";
+                            return;
+                        }
 
-                    // Передаем пользователя в главное окно
-                    MainWindow main = new MainWindow(user);
-                    main.Show();
-                    this.Close();
+                        // Вход успешен:
+                        LoggedInUser = user;
+
+                        // Передаем пользователя в главное окно
+                        MainWindow main = new MainWindow(user);
+                        main.Show();
+
+                        this.Close();
+                    }
+                    else
+                    {
+                        // Пароль неверен
+                        ErrorText.Text = "Неверное имя пользователя или пароль.";
+                    }
                 }
                 else
                 {
+                    // Пользователь не найден
                     ErrorText.Text = "Неверное имя пользователя или пароль.";
                 }
             }

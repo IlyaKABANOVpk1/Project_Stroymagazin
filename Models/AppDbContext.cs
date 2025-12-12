@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Project_Stroymagazin.Models.Entities;
 using Project_Stroymagazin.Models.Entities.ENUMS;
+using Project_Stroymagazin.Utils;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -62,7 +63,7 @@ namespace Project_Stroymagazin.Models
                 {
                     Id = 1,
                     Username = "admin",
-                    PasswordHash = "admin",
+                    PasswordHash = PasswordHasher.HashPassword("admin"),
                     FullName = "Системный Администратор",
                     Role = RoleType.Administrator,
                     IsActive = true
