@@ -138,7 +138,7 @@ namespace Project_Stroymagazin
                 Height = 45,
                 Margin = new Thickness(0, 2, 0, 2),
                 Background = Brushes.Transparent,
-                Foreground = new SolidColorBrush(Color.FromRgb(220, 220, 250)),
+                Foreground = new SolidColorBrush(Color.FromRgb(159, 168, 218)),
                 BorderThickness = new Thickness(0),
                 HorizontalContentAlignment = HorizontalAlignment.Left,
                 Padding = new Thickness(20, 0, 0, 0),
@@ -149,7 +149,7 @@ namespace Project_Stroymagazin
             btn.Click += (s, e) => onClick();
 
             
-            btn.MouseEnter += (s, e) => btn.Background = new SolidColorBrush(Color.FromRgb(57, 73, 171));
+            btn.MouseEnter += (s, e) => btn.Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
             btn.MouseLeave += (s, e) => btn.Background = Brushes.Transparent;
 
             MenuPanel.Children.Add(btn);

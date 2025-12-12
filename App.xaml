@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:Project_Stroymagazin"
              StartupUri="LoginWindow.xaml">
     <Application.Resources>
-         
+        
     </Application.Resources>
 </Application>

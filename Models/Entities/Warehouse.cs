@@ -9,6 +9,7 @@ namespace Project_Stroymagazin.Models.Entities
 {
     public class Warehouse
     {
+        [Key]
         public int Id { get; set; }
         [Required]
         public string Name { get; set; } = null!;

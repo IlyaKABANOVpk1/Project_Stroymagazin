@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Project_Stroymagazin.UserEditWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Сотрудник" Height="450" Width="400"
+        Title="Сотрудник" Height="500" Width="400"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
         Background="#F5F5F5">
 

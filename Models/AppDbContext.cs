@@ -57,23 +57,6 @@ namespace Project_Stroymagazin.Models
                 .Property(u => u.Role)
                 .HasConversion<int>();
 
-         
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = 1,
-                    Username = "admin",
-                    PasswordHash = PasswordHasher.HashPassword("admin"),
-                    FullName = "Системный Администратор",
-                    Role = RoleType.Administrator,
-                    IsActive = true
-                }
-            );
-
-           
-            modelBuilder.Entity<Warehouse>().HasData(
-                new Warehouse { Id = 1, Name = "Центральный склад", Address = "ул. Ленина 1" }
-            );
 
 
             modelBuilder.Entity<Product>()
