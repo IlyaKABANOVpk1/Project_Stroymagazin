@@ -23,7 +23,25 @@
                 <Separator Margin="0,10"/>
 
                 <TextBlock Text="Поиск товара (SKU, Штрихкод или Название):" Margin="0,5,0,2"/>
-                <TextBox x:Name="SearchBox" Padding="8" KeyDown="SearchBox_KeyDown" FontSize="14"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox Grid.Column="0" x:Name="SearchBox" Padding="8" KeyDown="SearchBox_KeyDown" FontSize="14"
+             ToolTip="Введите SKU или название и нажмите Enter или кнопку поиска"/>
+
+                    <Button Grid.Column="1" Content="🔍" Click="SearchButton_Click" 
+            Width="40" Margin="5,0,0,0" Background="#2196F3" Foreground="White"
+            ToolTip="Найти товар">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="4"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </Grid>
 
                 <TextBlock Text="Выбранный товар:" Margin="0,15,0,5"/>
                 <TextBlock x:Name="SelectedProductText" Text="-" FontSize="16" FontWeight="Bold" Foreground="#1A237E"/>

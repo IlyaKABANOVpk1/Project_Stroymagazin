@@ -50,29 +50,48 @@ namespace Project_Stroymagazin.Pages
             }
         }
 
+        private void PerformSearch()
+        {
+            string term = SearchBox.Text.Trim().ToLower();
+            if (string.IsNullOrWhiteSpace(term)) return;
+
+            using (var db = new AppDbContext())
+            {
+                // Ищем по точному совпадению SKU или частичному совпадению имени
+                _selectedProduct = db.Products
+                    .FirstOrDefault(p => p.SKU.ToLower() == term || p.Name.ToLower().Contains(term));
+            }
+
+            if (_selectedProduct != null)
+            {
+                SelectedProductText.Text = $"{_selectedProduct.Name} (SKU: {_selectedProduct.SKU})";
+                // Подставляем цену продажи по умолчанию, но можно менять
+                PriceBox.Text = _selectedProduct.Price.ToString("N2");
+                SelectedProductText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1A237E")); // Синий цвет
+                QuantityBox.Focus();
+            }
+            else
+            {
+                SelectedProductText.Text = "❌ Товар не найден. Проверьте SKU или название.";
+                SelectedProductText.Foreground = Brushes.Red;
+                PriceBox.Text = "0.00";
+                _selectedProduct = null;
+            }
+        }
+
+        // Обнови существующий метод
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && !string.IsNullOrWhiteSpace(SearchBox.Text))
+            if (e.Key == Key.Enter)
             {
-                string term = SearchBox.Text.ToLower();
-                using (var db = new AppDbContext())
-                {
-                    _selectedProduct = db.Products
-                        .FirstOrDefault(p => p.SKU.ToLower() == term || p.Name.ToLower().Contains(term));
-                }
-
-                if (_selectedProduct != null)
-                {
-                    SelectedProductText.Text = $"{_selectedProduct.Name} (SKU: {_selectedProduct.SKU})";
-                    PriceBox.Text = _selectedProduct.Price.ToString("N2");
-                    QuantityBox.Focus();
-                }
-                else
-                {
-                    SelectedProductText.Text = "Товар не найден";
-                    PriceBox.Text = "0.00";
-                }
+                PerformSearch();
             }
+        }
+
+        // Добавь новый метод для кнопки
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            PerformSearch();
         }
 
         private void AddItemToShipment_Click(object sender, RoutedEventArgs e)

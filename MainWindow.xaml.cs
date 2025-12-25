@@ -43,16 +43,16 @@ namespace Project_Stroymagazin
             MenuPanel.Children.Clear();
 
             
-            CreateMenuButton("Главная", "Home", () =>
+            CreateMenuButton("Главная статистика", "Home", () =>
             {
                 PageTitleText.Text = "Общая статистика";
                 MainFrame.Navigate(new DashboardPage());
             });
 
-      
+            
             if (_currentUser.Role == RoleType.Administrator)
             {
-                CreateSectionHeader("Администрирование");
+                CreateSectionHeader("Настройки системы");
 
                 CreateMenuButton("Сотрудники", "AccountMultiple", () =>
                 {
@@ -60,73 +60,68 @@ namespace Project_Stroymagazin
                     MainFrame.Navigate(new UsersPage());
                 });
 
-                CreateMenuButton("Склады", "Warehouse", () =>
+                CreateMenuButton("Список складов", "Warehouse", () =>
                 {
-                    PageTitleText.Text = "Управление складами";
+                    PageTitleText.Text = "Адреса и склады";
                     MainFrame.Navigate(new WarehousesPage());
+                    // Здесь Админ создает Склад как сущность, но не трогает товар
                 });
 
-               
+                CreateSectionHeader("Справочники (Мастер-данные)");
+
                 CreateMenuButton("Каталог товаров", "PackageVariantClosed", () =>
                 {
-                    PageTitleText.Text = "Управление каталогом";
+                    PageTitleText.Text = "Редактирование каталога";
                     MainFrame.Navigate(new ProductsPage());
-                });
-            }
-
-           
-            if (_currentUser.Role == RoleType.PurchaseManager || _currentUser.Role == RoleType.Administrator)
-            {
-                CreateSectionHeader("Закупки");
-
-             
-                CreateMenuButton("Заказы поставщикам", "Truck", () =>
-                {
-                    PageTitleText.Text = "Заказы";
-                    MainFrame.Navigate(new OrdersPage());
+                    // Админ создает карточки товаров (названия, SKU), но не кол-во
                 });
 
-                CreateMenuButton("Поставщики", "Domain", () =>
+                CreateMenuButton("База поставщиков", "Domain", () =>
                 {
-                    PageTitleText.Text = "База поставщиков";
+                    PageTitleText.Text = "Контрагенты";
                     MainFrame.Navigate(new SuppliersPage());
                 });
             }
 
             
-            if (_currentUser.Role == RoleType.WarehouseManager || _currentUser.Role == RoleType.Administrator)
+            else if (_currentUser.Role == RoleType.WarehouseManager)
             {
-                CreateSectionHeader("Склад и логистика");
+                CreateSectionHeader("Операции");
 
-                CreateMenuButton("Остатки товара", "Box", () =>
-                {
-                    PageTitleText.Text = "Текущие остатки";
-                    MainFrame.Navigate(new StockPage());
-                });
-
-              
                 CreateMenuButton("Приемка товара", "Download", () =>
                 {
-                    PageTitleText.Text = "Оформление прихода";
+                    PageTitleText.Text = "Оформление поступления";
                     MainFrame.Navigate(new ArrivalPage());
                 });
 
-               
-                CreateMenuButton("Отгрузка/Списание", "Upload", () =>
+                CreateMenuButton("Отгрузка / Списание", "Upload", () =>
                 {
-                    PageTitleText.Text = "Оформление расхода";
+                    PageTitleText.Text = "Расход товара";
                     MainFrame.Navigate(new ShipmentPage());
                 });
 
-               
-                CreateMenuButton("История операций", "History", () =>
+                CreateSectionHeader("Складской учет");
+
+                CreateMenuButton("Текущие остатки", "Box", () =>
                 {
-                    PageTitleText.Text = "Движение товаров";
+                    PageTitleText.Text = "Наличие на складах";
+                    MainFrame.Navigate(new StockPage());
+                });
+
+                CreateMenuButton("История движений", "History", () =>
+                {
+                    PageTitleText.Text = "Журнал операций";
                     MainFrame.Navigate(new InventoryHistoryPage());
                 });
-            }
 
-           
+                CreateSectionHeader("Закупки");
+
+                CreateMenuButton("Заказы поставщикам", "Truck", () =>
+                {
+                    PageTitleText.Text = "Управление заказами";
+                    MainFrame.Navigate(new OrdersPage());
+                });
+            }
         }
 
 
