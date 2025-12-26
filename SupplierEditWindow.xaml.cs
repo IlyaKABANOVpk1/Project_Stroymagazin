@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -38,9 +39,28 @@ namespace Project_Stroymagazin
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            // 1. Валидация названия
             if (string.IsNullOrWhiteSpace(NameBox.Text))
             {
-                MessageBox.Show("Введите название компании.", "Ошибка");
+                MessageBox.Show("Введите название компании.", "Ошибка валидации");
+                return;
+            }
+
+            // 2. Валидация Email (если введен)
+            if (!string.IsNullOrWhiteSpace(EmailBox.Text))
+            {
+                string emailPattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+                if (!Regex.IsMatch(EmailBox.Text, emailPattern))
+                {
+                    MessageBox.Show("Введите корректный Email (например: info@company.com).", "Ошибка валидации");
+                    return;
+                }
+            }
+
+            // 3. Валидация телефона (простая проверка на длину, можно усложнить)
+            if (string.IsNullOrWhiteSpace(PhoneBox.Text) || PhoneBox.Text.Length < 6)
+            {
+                MessageBox.Show("Введите корректный номер телефона (минимум 6 цифр).", "Ошибка валидации");
                 return;
             }
 
@@ -59,14 +79,15 @@ namespace Project_Stroymagazin
 
                 if (entity != null)
                 {
-                    entity.Name = NameBox.Text;
-                    entity.Phone = PhoneBox.Text;
-                    entity.Email = EmailBox.Text;
+                    entity.Name = NameBox.Text.Trim();
+                    entity.Phone = PhoneBox.Text.Trim();
+                    entity.Email = EmailBox.Text.Trim().ToLower(); // Почту лучше хранить в нижнем регистре
 
                     db.SaveChanges();
+                    this.DialogResult = true; // Чтобы список обновился
+                    this.Close();
                 }
             }
-            this.Close();
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)

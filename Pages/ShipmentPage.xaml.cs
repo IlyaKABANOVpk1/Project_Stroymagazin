@@ -57,7 +57,6 @@ namespace Project_Stroymagazin.Pages
 
             using (var db = new AppDbContext())
             {
-                // Ищем по точному совпадению SKU или частичному совпадению имени
                 _selectedProduct = db.Products
                     .FirstOrDefault(p => p.SKU.ToLower() == term || p.Name.ToLower().Contains(term));
             }
@@ -65,30 +64,24 @@ namespace Project_Stroymagazin.Pages
             if (_selectedProduct != null)
             {
                 SelectedProductText.Text = $"{_selectedProduct.Name} (SKU: {_selectedProduct.SKU})";
-                // Подставляем цену продажи по умолчанию, но можно менять
                 PriceBox.Text = _selectedProduct.Price.ToString("N2");
-                SelectedProductText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1A237E")); // Синий цвет
+                SelectedProductText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1A237E"));
                 QuantityBox.Focus();
             }
             else
             {
-                SelectedProductText.Text = "❌ Товар не найден. Проверьте SKU или название.";
+                SelectedProductText.Text = "❌ Товар не найден.";
                 SelectedProductText.Foreground = Brushes.Red;
                 PriceBox.Text = "0.00";
                 _selectedProduct = null;
             }
         }
 
-        // Обнови существующий метод
         private void SearchBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                PerformSearch();
-            }
+            if (e.Key == Key.Enter) PerformSearch();
         }
 
-        // Добавь новый метод для кнопки
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             PerformSearch();
@@ -96,41 +89,59 @@ namespace Project_Stroymagazin.Pages
 
         private void AddItemToShipment_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedProduct == null || !decimal.TryParse(QuantityBox.Text, out decimal qty) || !decimal.TryParse(PriceBox.Text, out decimal price) || qty <= 0)
+         
+            if (_selectedProduct == null)
             {
-                MessageBox.Show("Выберите товар и введите корректное количество/цену.");
+                MessageBox.Show("Сначала найдите и выберите товар.", "Валидация");
                 return;
             }
 
-            // Проверка наличия на выбранном складе
+            if (!decimal.TryParse(QuantityBox.Text.Replace(".", ","), out decimal qty) || qty <= 0)
+            {
+                MessageBox.Show("Введите корректное количество (положительное число).", "Валидация");
+                return;
+            }
+
+            
+            if (!decimal.TryParse(PriceBox.Text.Replace(".", ","), out decimal price) || price < 0)
+            {
+                MessageBox.Show("Введите корректную цену.", "Валидация");
+                return;
+            }
+
+        
             if (WarehouseCombo.SelectedValue is not int warehouseId)
             {
-                MessageBox.Show("Выберите склад списания.");
+                MessageBox.Show("Выберите склад списания.", "Валидация");
                 return;
             }
 
+           
             using (var db = new AppDbContext())
             {
                 var stock = db.Stocks.FirstOrDefault(s => s.ProductId == _selectedProduct.Id && s.WarehouseId == warehouseId);
-                if (stock == null || stock.Quantity < qty)
+
+               
+                decimal alreadyInList = _shipmentItems
+                    .Where(i => i.ProductId == _selectedProduct.Id)
+                    .Sum(i => i.Quantity);
+
+                if (stock == null || stock.Quantity < (qty + alreadyInList))
                 {
-                    MessageBox.Show($"На складе {warehouseId} недостаточно товара. Доступно: {stock?.Quantity ?? 0}");
+                    MessageBox.Show($"Недостаточно товара. Доступно на складе: {stock?.Quantity ?? 0}. В списке уже: {alreadyInList}", "Ошибка остатков");
                     return;
                 }
             }
 
-            // Добавление в локальную коллекцию
-            var newItem = new ShipmentItem
+            _shipmentItems.Add(new ShipmentItem
             {
                 ProductId = _selectedProduct.Id,
                 Product = _selectedProduct,
                 Quantity = qty,
                 Price = price
-            };
+            });
 
-            _shipmentItems.Add(newItem);
-
-            ShipmentGrid.Items.Refresh();
+            
             SearchBox.Clear();
             SelectedProductText.Text = "-";
             PriceBox.Text = "0.00";
@@ -139,31 +150,26 @@ namespace Project_Stroymagazin.Pages
             SearchBox.Focus();
         }
 
-        private void RemoveItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is Button btn && btn.Tag is ShipmentItem item)
-            {
-                _shipmentItems.Remove(item);
-            }
-        }
-
         private void FinalizeShipment_Click(object sender, RoutedEventArgs e)
         {
+            
             if (_shipmentItems.Count == 0)
             {
-                MessageBox.Show("Список списания пуст.");
+                MessageBox.Show("Список списания пуст.", "Валидация");
                 return;
             }
 
+            
             if (WarehouseCombo.SelectedValue is not int warehouseId)
             {
-                MessageBox.Show("Выберите склад для оформления списания.");
+                MessageBox.Show("Выберите склад для оформления.", "Валидация");
                 return;
             }
 
+            
             if (string.IsNullOrWhiteSpace(ReasonBox.Text))
             {
-                MessageBox.Show("Укажите причину списания (Отгрузка, Брак и т.п.).");
+                MessageBox.Show("Укажите причину списания.", "Валидация");
                 return;
             }
 
@@ -171,23 +177,19 @@ namespace Project_Stroymagazin.Pages
             {
                 foreach (var item in _shipmentItems)
                 {
-                    // 1. Создание записи о движении (списание)
-                    var transaction = new InventoryTransaction
+                    // 1. Транзакция (Расход)
+                    db.InventoryTransactions.Add(new InventoryTransaction
                     {
                         Date = DateTime.Now,
-                        Type = TransactionType.Sale, // Используем Sale как общее списание/отгрузку
+                        Type = TransactionType.Sale,
                         ProductId = item.ProductId,
                         WarehouseId = warehouseId,
-                        Quantity = -item.Quantity, // Отрицательное число (расход)
-                        UserId = 1, // Текущий пользователь
-                       
-                    };
-                    db.InventoryTransactions.Add(transaction);
+                        Quantity = -item.Quantity, // Отрицательное значение
+                        UserId = 1 // Жестко прописано
+                    });
 
-                    // 2. Списание остатка (Stock)
-                    var stock = db.Stocks
-                        .FirstOrDefault(s => s.ProductId == item.ProductId && s.WarehouseId == warehouseId);
-
+                    // 2. Обновление остатка
+                    var stock = db.Stocks.FirstOrDefault(s => s.ProductId == item.ProductId && s.WarehouseId == warehouseId);
                     if (stock != null)
                     {
                         stock.Quantity -= item.Quantity;
@@ -197,9 +199,17 @@ namespace Project_Stroymagazin.Pages
                 db.SaveChanges();
             }
 
-            MessageBox.Show($"Документ списания оформлен успешно. Списано {ShipmentGrid.Items.Count} позиций.");
+            MessageBox.Show($"Списание оформлено успешно.", "Успех");
             _shipmentItems.Clear();
             ReasonBox.Clear();
+        }
+
+        private void RemoveItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is ShipmentItem item)
+            {
+                _shipmentItems.Remove(item);
+            }
         }
     }
 }

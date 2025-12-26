@@ -66,35 +66,53 @@ namespace Project_Stroymagazin.Pages
 
         private void ConfirmArrival_Click(object sender, RoutedEventArgs e)
         {
-            if (OrderCombo.SelectedValue is not int orderId || WarehouseCombo.SelectedValue is not int warehouseId)
+            // ВАЛИДАЦИЯ: Выбор заказа и склада
+            if (OrderCombo.SelectedValue == null)
             {
-                MessageBox.Show("Выберите заказ и склад.");
+                MessageBox.Show("Пожалуйста, выберите заказ для приемки.", "Валидация");
                 return;
             }
+
+            if (WarehouseCombo.SelectedValue == null)
+            {
+                MessageBox.Show("Пожалуйста, выберите склад, на который прибудет товар.", "Валидация");
+                return;
+            }
+
+            int orderId = (int)OrderCombo.SelectedValue;
+            int warehouseId = (int)WarehouseCombo.SelectedValue;
 
             using (var db = new AppDbContext())
             {
                 var order = db.PurchaseOrders.Find(orderId);
-                if (order == null || order.Status != OrderStatus.Received)
-                {
-                    // Продолжаем выполнение, если статус Pending. Опечатка в логике проверки выше исправлена логикой ниже.
-                }
 
-                if (order.Status != OrderStatus.Pending) return;
+                // ВАЛИДАЦИЯ: Проверка статуса в БД (защита от повторного нажатия)
+                if (order == null || order.Status != OrderStatus.Pending)
+                {
+                    MessageBox.Show("Этот заказ уже был принят или отменен.", "Ошибка");
+                    return;
+                }
 
                 var orderItems = db.OrderItems.Where(oi => oi.OrderId == orderId).ToList();
 
+                // ВАЛИДАЦИЯ: Проверка наличия позиций в заказе
+                if (!orderItems.Any())
+                {
+                    MessageBox.Show("В выбранном заказе нет товаров.", "Ошибка");
+                    return;
+                }
+
                 foreach (var item in orderItems)
                 {
-                    // 1. Создаем запись о движении для каждого товара отдельно
+                    // 1. Создаем запись о движении
                     var transaction = new InventoryTransaction
                     {
                         Date = DateTime.Now,
                         Type = TransactionType.Purchase,
                         WarehouseId = warehouseId,
                         ProductId = item.ProductId,
-                        Quantity = item.Quantity, // Положительное число (приход)
-                        UserId = 1
+                        Quantity = item.Quantity,
+                        UserId = 1 // Жестко прописано по требованию
                     };
                     db.InventoryTransactions.Add(transaction);
 
@@ -124,7 +142,7 @@ namespace Project_Stroymagazin.Pages
                 db.SaveChanges();
             }
 
-            MessageBox.Show("Приемка оформлена успешно!");
+            MessageBox.Show("Приемка оформлена успешно!", "Успех");
             LoadInitialData();
             ItemsGrid.ItemsSource = null;
         }

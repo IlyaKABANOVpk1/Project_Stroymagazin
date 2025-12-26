@@ -55,7 +55,7 @@
                 <DataGridTextColumn Header="SKU" Binding="{Binding SKU}" Width="100"/>
                 <DataGridTextColumn Header="Наименование" Binding="{Binding Name}" Width="*"/>
                 <DataGridTextColumn Header="Категория" Binding="{Binding Category.Name}" Width="150"/>
-                <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat=C2}" Width="100"/>
+                <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N2} ₽}" Width="100"/>
                 <DataGridTextColumn Header="Ед. изм." Binding="{Binding UnitOfMeasure}" Width="80"/>
 
                 <DataGridTemplateColumn Width="140">

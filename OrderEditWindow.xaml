@@ -69,7 +69,7 @@
                 <DataGridTextColumn Header="Товар" Binding="{Binding Product.Name}" Width="*"/>
                 <DataGridTextColumn Header="Артикул" Binding="{Binding Product.SKU}" Width="150"/>
                 <DataGridTextColumn Header="Кол-во" Binding="{Binding Quantity}" Width="100"/>
-                <DataGridTextColumn Header="Цена" Binding="{Binding PurchasePrice, StringFormat=C2}" Width="100"/>
+                <DataGridTextColumn Header="Цена" Binding="{Binding PurchasePrice, StringFormat={}{0:N2} ₽}" Width="100"/>
                 <DataGridTemplateColumn Width="80">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>

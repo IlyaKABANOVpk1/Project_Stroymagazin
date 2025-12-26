@@ -38,19 +38,37 @@ namespace Project_Stroymagazin.Pages
 
         private void AddWarehouse_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(NewNameBox.Text))
+            // 1. Валидация на пустые поля
+            string name = NewNameBox.Text.Trim();
+            string address = NewAddressBox.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(name))
             {
-                MessageBox.Show("Введите название склада");
+                MessageBox.Show("Введите название склада!", "Валидация");
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(address))
+            {
+                MessageBox.Show("Введите адрес склада!", "Валидация");
                 return;
             }
 
             using (var db = new AppDbContext())
             {
+                // 2. Проверка на уникальность названия (чтобы не путаться)
+                if (db.Warehouses.Any(w => w.Name.ToLower() == name.ToLower()))
+                {
+                    MessageBox.Show("Склад с таким названием уже существует!", "Ошибка");
+                    return;
+                }
+
                 var warehouse = new Warehouse
                 {
-                    Name = NewNameBox.Text,
-                    Address = NewAddressBox.Text
+                    Name = name,
+                    Address = address
                 };
+
                 db.Warehouses.Add(warehouse);
                 db.SaveChanges();
             }
@@ -58,15 +76,28 @@ namespace Project_Stroymagazin.Pages
             NewNameBox.Clear();
             NewAddressBox.Clear();
             LoadData();
+            MessageBox.Show("Склад успешно добавлен.");
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
             if (sender is Button btn && btn.Tag is int id)
             {
-                if (MessageBox.Show("Удалить склад? Это может повлиять на остатки.", "Внимание", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                using (var db = new AppDbContext())
                 {
-                    using (var db = new AppDbContext())
+                    // 3. Валидация перед удалением: есть ли на складе товары или операции?
+                    bool hasStocks = db.Stocks.Any(s => s.WarehouseId == id && s.Quantity != 0);
+                    bool hasTransactions = db.InventoryTransactions.Any(t => t.WarehouseId == id);
+
+                    if (hasStocks || hasTransactions)
+                    {
+                        MessageBox.Show("Нельзя удалить склад, на котором есть товары или по которому проводились операции.\n" +
+                                        "Сначала переместите товары или удалите связанные записи.", "Ошибка удаления");
+                        return;
+                    }
+
+                    if (MessageBox.Show("Вы уверены, что хотите удалить этот склад?", "Подтверждение",
+                        MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                     {
                         var w = db.Warehouses.Find(id);
                         if (w != null)

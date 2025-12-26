@@ -82,12 +82,16 @@ namespace Project_Stroymagazin.Pages
 
         private void ShowDetails_Click(object sender, RoutedEventArgs e)
         {
-            // Здесь должна быть логика открытия модального окна для показа Item'ов транзакции
             if (sender is Button btn && btn.Tag is InventoryTransaction transaction)
             {
-                MessageBox.Show($"Транзакция ID: {transaction.Id}\n" +
-                                $"Тип: {transaction.Type}\n" +
-                                "Детализация не реализована.");
+                // Создаем экземпляр окна деталей, передавая выбранную транзакцию
+                TransactionDetailsWindow detailsWindow = new TransactionDetailsWindow(transaction);
+
+                // Устанавливаем текущее окно как владельца (чтобы модальное окно было по центру)
+                detailsWindow.Owner = Window.GetWindow(this);
+
+                // Показываем окно как модальное
+                detailsWindow.ShowDialog();
             }
         }
     }
